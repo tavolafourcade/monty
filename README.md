@@ -1,103 +1,46 @@
 # C - Stacks, Queues - LIFO, FIFO
+## Monty 0.98 Interpreter
 
-This project is a collaboration between David Peralta and Diego Lopez, actual students of Software Engineering at Holberton School. It consists of developing and making a scripting language that is first compiled into Monty byte codes.
+The objective of this project was to build a Monty 0.98 scripting language interpreter to handle various commands to manipulate stacks and queues.
 
-The goal of this project is to create an interpreter for Monty ByteCodes files.
+## Monty byte code files
 
-## Quick Start
+Files containing Monty byte codes usually have the .m extension. Most of the industry uses this standard but it is not required by the specification of the language. There is not more than one instruction per line. There can be any number of spaces before or after the opcode and its argument:
 
-1. Git clone this respository to your local directory.
-
-       $ git clone https://github.com/diegolopezq95/monty.git
-  
-2. Compile the program.
-
-       $ gcc -Wall -Werror -Wextra -pedantic *.c -o monty
-       
-3. Now execute.
-      
-       $ ./monty bytecodes/00.m
+```
+julien@ubuntu:~/monty$ cat -e bytecodes/000.m
+push 0$
+push 1$
+push 2$
+  push 3$
+                   pall    $
+push 4$
+    push 5    $
+      push    6        $
+pall$
+julien@ubuntu:~/monty$
+```
        
 ## Opcode Commands
 
-This interpreter supports the next opcode commands:
+The commands coded into the interpretor are as follows:
 
-    push - pushes an element to the stack.
-       
-    pall - prints all the values on the stack, starting from the top of the stack.
+* push [Usage: push #] - pushes # onto the stack. # is an integer value
 
-    pint - prints the value at the top of the stack.
-    
-    pop - removes the top element of the stack.
-    
-    swap - swaps the top two elements of the stack.
-    
-    add - adds the top two elements of the stack.
+* pall - prints the stack contents starting from the top
 
-    nop - doesn’t do anything.
+* pint - prints the first element on the top of the stack
 
-    sub - subtracts the top element of the stack from the second top element of the stack.
+* pop - deletes the top element of the stack
 
-    div - divides the second top element of the stack by the top element of the stack.
-    
-    mul - multiplies the second top element of the stack with the top element of the stack.
+* swap - swaps the first two elements of the stack
 
-    mod - computes the rest of the division of the second top element of the stack by the top element of the stack.
-    
-    pchar - prints the char at the top of the stack.
+* add - adds the first two elements of the stack
 
-    pstr - prints the string starting at the top of the stack.
-
-    rotl - The top element of the stack becomes the last one and the second top element becomes the first one.
-    
-    rotr - The last element of the stack becomes the top element of the stack.
-
-    stack - sets the format of the data to a stack (LIFO).
-    
-    queue - sets the format of the data to a queue (FIFO).
+* nop - does not do anything to the stack
 
 
-## Example:
 
-       /0x19-stacks_queues_lifo_fifo$ cat bytecodes/00.m
-       queue
-       push 1
-       push 2
-       push 3
-       pall
-       stack
-       push 4
-       push 5
-       push 6
-       pall
-       add
-       pall
-       queue
-       push 11111
-       add
-       pall
-       /0x19-stacks_queues_lifo_fifo$ ./monty bytecodes/00.m
-       1
-       2
-       3
-       6
-       5
-       4
-       1
-       2
-       3
-       11
-       4
-       1
-       2
-       3
-       15
-       1
-       2
-       3
-       11111
-       /0x19-stacks_queues_lifo_fifo$
-       
 ## Author:
 - Juan Granada <1958@holbertonschool.com>
 
