@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 #0x19. C - Stacks, Queues - LIFO, FIFO
+=======
+# 0x19.C - Stacks, Queues - LIFO, FIFO
+
+>>>>>>> f659ef04661abee0057a43b2b0d41171b5e11d30
 ## Monty 0.98 Interpreter
 
 The objective of this project was to build a Monty 0.98 scripting language interpreter to handle various commands to manipulate stacks and queues.
 
 ## Requirements
+<<<<<<< HEAD
 * Allowed editors: `vi`, `vim`, `emacs`
 * All your files will be compiled on Ubuntu 14.04 LTS 
 * All your files should end with a new line
@@ -13,6 +19,18 @@ The objective of this project was to build a Monty 0.98 scripting language inter
 * A `README.md` file, at the root of the folder of the project, is mandatory
 * The prototypes of all your functions should be included in your header file called monty.h
 * All your header files should be include guarded
+=======
+
+- Allowed editors: `vi`, `vim`, `emacs`
+- All your files will be compiled on Ubuntu 14.04 LTS
+- All your files should end with a new line
+- You allowed to use a maximum of one global variable
+- No more than 5 functions per file
+- You are allowed to use the C standard library
+- A `README.md` file, at the root of the folder of the project, is mandatory
+- The prototypes of all your functions should be included in your header file called monty.h
+- All your header files should be include guarded
+>>>>>>> f659ef04661abee0057a43b2b0d41171b5e11d30
 
 ## Monty byte code files
 
@@ -53,11 +71,16 @@ $
 pall This is the end of our program. Monty is awesome!$
 julien@ubuntu:~/monty$
 ```
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> f659ef04661abee0057a43b2b0d41171b5e11d30
 ## Opcode Commands
 
 The commands coded into the interpretor are as follows:
 
+<<<<<<< HEAD
 * push [Usage: push #] - pushes # onto the stack. # is an integer value
 
 * pall - prints the stack contents starting from the top
@@ -71,3 +94,18 @@ The commands coded into the interpretor are as follows:
 * add - adds the first two elements of the stack
 
 * nop - does not do anything to the stack
+=======
+- push [Usage: push #] - pushes # onto the stack. # is an integer value
+
+- pall - prints the stack contents starting from the top
+
+- pint - prints the first element on the top of the stack
+
+- pop - deletes the top element of the stack
+
+- swap - swaps the first two elements of the stack
+
+- add - adds the first two elements of the stack
+
+- nop - does not do anything to the stack
+>>>>>>> f659ef04661abee0057a43b2b0d41171b5e11d30
