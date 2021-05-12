@@ -1,4 +1,4 @@
-# C - Stacks, Queues - LIFO, FIFO
+#0x19. C - Stacks, Queues - LIFO, FIFO
 ## Monty 0.98 Interpreter
 
 The objective of this project was to build a Monty 0.98 scripting language interpreter to handle various commands to manipulate stacks and queues.
@@ -71,10 +71,3 @@ The commands coded into the interpretor are as follows:
 * add - adds the first two elements of the stack
 
 * nop - does not do anything to the stack
-
-
-
-## Author:
-- Juan Granada <1958@holbertonschool.com>
-
-2020 - All programs written by Juan Granada ([@juangraram](https://twitter.com/JuanGraRam)) at [Holberton School](https://www.holbertonschool.com/)
