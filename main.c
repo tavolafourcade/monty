@@ -1,123 +1,135 @@
 #include "monty.h"
 /**
- * push - pushes an element to the stack.
- * @stack: Double pointer to double linked list of elements stack'ed
- * @line_number: Number of line read from input file
+ * freedp - frees a double pointer
+ * @str: double pointer
+ * Return: void
  */
-void push(stack_t **stack, __attribute__((unused)) unsigned int line_number)
+void freedp(char **str)
 {
-	stack_t *new_node, *tmp;
+	int i = 0;
 
-	checkNum(gs);
-	new_node = malloc(sizeof(stack_t));
-	if (!new_node)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		freeall(gs);
-		exit(EXIT_FAILURE);
-	}
-	new_node->n = atoi(gs->args[1]);
-	if (gs->modeSQ == 0 || !*stack)
-	{
-		new_node->next = *stack;
-		if (*stack)
-			new_node->next->prev = new_node;
-		*stack = new_node;
-		new_node->prev = NULL;
-	}
-	else
-	{
-		tmp = *stack;
-		while (tmp->next)
-			tmp = tmp->next;
-		new_node->next = NULL;
-		new_node->prev = tmp;
-		tmp->next = new_node;
-	}
+	while (str[i])
+		free(str[i]), i++;
+	free(str);
 }
 /**
- * pall - prints all the values on the stack, starting
- * from the top of the stack.
- * @stack: Double pointer to double linked list of elements stack'ed
- * @line_number: Number of line read from input file
+ * init_instruction - initializes the function pointer array
+ * Return: A pointer to the funciton pointer or NULL on error
  */
-void pall(stack_t **stack, __attribute__((unused)) unsigned int line_number)
+instruction_t *init_instruction(void)
 {
-	stack_t *tmp;
+	instruction_t _list[] = {
+		{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop},
+		{"swap", swap}, {"add", add}, {"nop", nop}, {"sub", sub},
+		{"div", _div}, {"mul", mul}, {"mod", mod}, {"pchar", pchar},
+		{"pstr", pstr}, {"rotl", rotl}, {"rotr", rotr}, {NULL, NULL}
+	};
+	instruction_t *init_f = NULL;
+	int i = 0;
 
-	if (*stack)
+	init_f = malloc(sizeof(instruction_t) * 16);
+	if (!init_f)
 	{
-		tmp = *stack;
-		while (tmp)
+		dprintf(STDERR_FILENO, "Error: malloc failed\n");
+		fclose(fd_flags->fd_open);
+		free(fd_flags);
+		exit(EXIT_FAILURE);
+	}
+	while (i < 16)
+		init_f[i] = _list[i], i++;
+	return (init_f);
+}
+/**
+ * check - auxiliar check for queue, stack command or comments
+ * @str: pointer to the command
+ * @stack: stack
+ * Return: 1 if there is one this command 0 if not
+ */
+int check(char *str, stack_t **stack)
+{
+	int aux = 0;
+
+	if (str && !strcmp(str, "queue"))
+		fd_flags->queueFlag = 1, fd_flags->stack_index = 0, aux = 1;
+	if (str && !strcmp(str, "stack"))
+		fd_flags->queueFlag = 0, aux = 1;
+	if (str && str[0] == '#')
+		nop(stack, fd_flags->linecounter), aux = 1;
+
+	return (aux);
+}
+/**
+ * _run - executes the bytecode line by line
+ * Return: void
+ */
+void _run(void)
+{
+	int j = 0;
+	size_t len = 0;
+	stack_t *stack = NULL;
+
+	fd_flags->exec_opcode = NULL, fd_flags->linecounter = 1;
+	fd_flags->stack_index = 0, fd_flags->queueFlag = 0;
+	fd_flags->lines = NULL, fd_flags->exec_opcode = init_instruction();
+	fd_flags->buffer = NULL, fd_flags->integer = NULL;
+	while (getline(&(fd_flags->buffer), &len, fd_flags->fd_open) != EOF)
+	{
+		fd_flags->lines = strtok(fd_flags->buffer, " \t\n");
+		fd_flags->integer = strtok(NULL, " \t\n");
+		if (check(fd_flags->lines, &stack) || !fd_flags->lines)
 		{
-			printf("%d\n", tmp->n);
-			tmp = tmp->next;
+			free(fd_flags->buffer), fd_flags->lines = NULL;
+			fd_flags->buffer = NULL, fd_flags->integer = NULL;
+			fd_flags->linecounter++;
+			continue;
 		}
-	}
+		while (j < 16)
+		{
+			if (fd_flags->exec_opcode[j].f == NULL)
+			{
+				dprintf(STDERR_FILENO,
+					"L%i: unknown instruction %s\n",
+					fd_flags->linecounter, fd_flags->lines);
+				superfree(stack);
+			}
+			if (!strcmp(fd_flags->exec_opcode[j].opcode,
+					fd_flags->lines))
+			{
+				fd_flags->exec_opcode[j].f(&stack,
+					fd_flags->linecounter);
+				break;
+			} j++;
+		} j = 0, fd_flags->linecounter++;
+		free(fd_flags->buffer), fd_flags->lines = NULL;
+		fd_flags->buffer = NULL, fd_flags->integer = NULL;
+	} free_listint(stack), free(fd_flags->exec_opcode);
 }
 /**
- * pint - prints the value at the top of the stack, followed by a new line.
- * @stack: Double pointer to double linked list of elements stack'ed
- * @line_number: Number of line read from input file
+ * main - entry point
+ * @argc: number of arguments supplied to the program by the command line
+ * @argv: arrays of pointers to the arguments supplied to the program
+ * Return: EXIT_SUCCESS on success or EXIT_FAILURE on failure
  */
-void pint(stack_t **stack, unsigned int line_number)
+int main(int argc, char *argv[])
 {
-	if (*stack)
-		printf("%i\n", gs->stack->n);
-	else
+	char *file_name = NULL;
+
+	file_name = argv[1];
+	if (argc != 2)
 	{
-		fprintf(stderr, "L%u: can't pint, stack empty\n", line_number);
-		freeall(gs);
+		dprintf(STDERR_FILENO, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-}
-/**
- * pop - removes the top element of the stack.
- * @stack: Double pointer to double linked list of elements stack'ed
- * @line_number: Number of line read from input file
- */
-void pop(stack_t **stack, unsigned int line_number)
-{
-	stack_t *tmp;
-
-	if (*stack)
+	fd_flags = malloc(sizeof(info));
+	if (!fd_flags)
 	{
-		tmp = *stack;
-		if (tmp->next)
-			tmp->next->prev = NULL;
-		*stack = tmp->next;
-		free(tmp);
-	}
-	else
-	{
-		fprintf(stderr, "L%u: can't pop an empty stack\n", line_number);
-		freeall(gs);
+		dprintf(STDERR_FILENO, "Error: malloc failed\n");
 		exit(EXIT_FAILURE);
 	}
-
-}
-/**
- * swap - swaps the top two elements of the stack.
- * @stack: Double pointer to double linked list of elements stack'ed
- * @line_number: Number of line read from input file
- */
-void swap(stack_t **stack, unsigned int line_number)
-{
-	stack_t *tmp, *tmp2;
-
-	if (!*stack || !gs->stack->next)
-	{
-		fprintf(stderr, "L%u: can't swap, stack too short\n", line_number);
-		freeall(gs);
-		exit(EXIT_FAILURE);
-	}
-	tmp = *stack;
-	tmp2 = tmp->next;
-	tmp2->prev = NULL;
-	if (tmp2->next)
-		tmp2->next->prev = tmp;
-	tmp->next = tmp2->next;
-	tmp->prev = tmp2;
-	tmp2->next = tmp;
-	*stack = tmp2;
+	_open(file_name);/* open file */
+	_run();
+	free(fd_flags->buffer);
+	fclose(fd_flags->fd_open);
+	free(fd_flags);
+	return (EXIT_SUCCESS);
 }

@@ -1,10 +1,18 @@
-#ifndef HEADER_FILE
-#define HEADER_FILE
+#ifndef MONTY_H
+#define MONTY_H
+
+/* Libraries */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdlib.h>
+#include <math.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+/* Structures */
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -21,7 +29,6 @@ typedef struct stack_s
 	struct stack_s *prev;
 	struct stack_s *next;
 } stack_t;
-
 /**
  * struct instruction_s - opcode and its function
  * @opcode: the opcode
@@ -35,45 +42,38 @@ typedef struct instruction_s
 	char *opcode;
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
-
 /**
- * struct generalStruct - General struct of the program
- * @buffer: Stores the line read by fgets
- * @args: Array of pointers to arguments of the line read
- * @argv: Array of pointer to the arguments passed to the program
- * @dicciop: Array of paired opcode-function list
- * @stack: Pointer to double linked list of stack'ed elements
- * @lineNumber: Number of the line read from the input file
- * @bufferSize: Fixed sixe to be read per line of file
- * @modeSQ: Mode of storing elements in stack, 0 = stack-mode, 1 = queue-mode
- * @montyFile: Input file opened
+ * struct info - information about the file, flags and linecounter
+ * @fd_open: file descriptor
+ * @linecounter: count the lines
+ * @number: number
+ * @buffer: buffer getline
+ * @queueFlag: flag to know is a queue
+ * @integer: data of the integer
+ * @stack_index: keep the index to add when a queue is on
+ * @lines: content of the file in lines
+ * @exec_opcode: opcodes
  */
-typedef struct generalStruct
+typedef struct info
 {
+	FILE *fd_open;
+	int linecounter;
+	int queueFlag;
+	char *integer;
+	int number;
+	int stack_index;
 	char *buffer;
-	char **args;
-	char **argv;
-	instruction_t *dicciop;
-	stack_t *stack;
-	unsigned int lineNumber;
-	size_t bufferSize;
-	int modeSQ;
-	FILE *montyFile;
-} gralStruct;
+	char *lines;
+	instruction_t *exec_opcode;
+} info;
 
-extern gralStruct *gs;
-
-/*Auxiliar functions*/
-gralStruct *initialize(char **argv);
-void _strtok(gralStruct *gs);
-int executeOp(gralStruct *gs);
-instruction_t *dic_op();
-void checkNum(gralStruct *gs);
-void freeall(gralStruct *gs);
-void freestack(gralStruct *gs);
-int isComment(gralStruct *gs);
-
-/*opcode functions*/
+/* Global Variables */
+info *fd_flags;
+/* Prototypes */
+int init_vars(info *fd_flags);
+void _open(char *file_name);
+void _run(void);
+int check(char *str, stack_t **stack);
 void push(stack_t **stack, unsigned int line_number);
 void pall(stack_t **stack, unsigned int line_number);
 void pint(stack_t **stack, unsigned int line_number);
@@ -82,12 +82,25 @@ void swap(stack_t **stack, unsigned int line_number);
 void add(stack_t **stack, unsigned int line_number);
 void nop(stack_t **stack, unsigned int line_number);
 void sub(stack_t **stack, unsigned int line_number);
-void div_s(stack_t **stack, unsigned int line_number);
 void mul(stack_t **stack, unsigned int line_number);
+void _div(stack_t **stack, unsigned int line_number);
 void mod(stack_t **stack, unsigned int line_number);
 void pchar(stack_t **stack, unsigned int line_number);
 void pstr(stack_t **stack, unsigned int line_number);
 void rotl(stack_t **stack, unsigned int line_number);
 void rotr(stack_t **stack, unsigned int line_number);
+int checkdigits(char *s);
+void free_listint(stack_t *stack);
+int _isdigit(int c);
+int _atoi(char *s);
+stack_t *add_dnodeint(stack_t **stack, const int n);
+stack_t *add_dnodeint_end(stack_t **stack, const int n);
+stack_t *add_dnode_at_index(stack_t **stack, unsigned int idx, int n);
+int delete_dnodeint_at_index(stack_t **stack, unsigned int index);
+char **str_tok(char *str, char *delimiter);
+void freedp(char **str);
+void superfree(stack_t *stack);
+char *_strtok(char *arg, char *dlm);
 
-#endif
+
+#endif /* MONTY_H */
